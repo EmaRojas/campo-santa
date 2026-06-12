@@ -1,59 +1,59 @@
 <template>
   <div v-if="lote">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-5">
       <div>
-        <router-link to="/" class="text-sm text-green-600 hover:underline mb-1 block">← Volver</router-link>
-        <h1 class="text-2xl font-bold text-gray-800">{{ lote.nombre }}</h1>
-      </div>
-      <div class="flex items-center gap-3">
-        <router-link :to="`/lote/${lote.id}/editar`" class="text-sm text-gray-500 hover:text-gray-700">
-          Editar
+        <router-link to="/" class="text-xs text-gray-400 hover:text-gray-600 mb-1 flex items-center gap-1">
+          <Icon icon="ph:caret-left" class="w-4 h-4" /> Volver
         </router-link>
-        <button @click="toggleActivo" class="text-sm font-medium" :class="lote.activo === false ? 'text-green-600 hover:text-green-700' : 'text-red-500 hover:text-red-700'">
-          {{ lote.activo === false ? 'Reactivar' : 'Desactivar' }}
+        <h1 class="text-xl font-bold text-gray-800">{{ lote.nombre }}</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <router-link :to="`/lote/${lote.id}/editar`" class="w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100 hover:shadow-md transition">
+          <Icon icon="ph:pencil-fill" class="w-4 h-4 text-gray-400" />
+        </router-link>
+        <button @click="toggleActivo" class="w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-sm border border-gray-100 hover:shadow-md transition" :class="lote.activo === false ? 'text-mp-green' : 'text-red-400'">
+          <Icon :icon="lote.activo === false ? 'ph:check-circle-fill' : 'ph:prohibit-fill'" class="w-4 h-4" />
         </button>
       </div>
     </div>
 
-    <div v-if="lote.activo === false" class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4 text-sm text-yellow-700 flex items-center gap-2">
+    <div v-if="lote.activo === false" class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm text-amber-700 flex items-center gap-2">
       <Icon icon="ph:warning-circle-fill" class="w-5 h-5 flex-shrink-0" />
       Lote desactivado. No aparece en el listado principal.
     </div>
 
-    <!-- Ubicación -->
-    <div v-if="lote.ubicacion" class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
-      <div class="flex flex-col sm:flex-row gap-4">
+    <div v-if="lote.ubicacion" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
+      <div class="flex items-start gap-4">
         <div class="flex-1 min-w-0">
-          <h2 class="font-semibold text-gray-700 mb-2 flex items-center gap-1.5"><Icon icon="ph:map-pin-fill" class="w-5 h-5" /> Ubicación</h2>
+          <h2 class="font-bold text-gray-700 mb-2 flex items-center gap-1.5"><Icon icon="ph:map-pin-fill" class="w-4 h-4 text-mp-blue" /> Ubicación</h2>
           <p class="text-sm text-gray-700 font-medium truncate">{{ lote.ubicacion.nombre || 'Sin referencia' }}</p>
           <p class="text-xs text-gray-400 mb-3">{{ lote.ubicacion.lat.toFixed(6) }}, {{ lote.ubicacion.lng.toFixed(6) }}</p>
           <a
             :href="`https://www.google.com/maps?q=${lote.ubicacion.lat},${lote.ubicacion.lng}`"
             target="_blank"
-            class="inline-block bg-blue-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-blue-600 transition shadow-sm"
+            class="inline-block bg-mp-blue text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm"
           >
             Ver en Google Maps
           </a>
         </div>
-        <div ref="miniMap" class="w-full sm:w-44 h-28 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200 relative z-0"></div>
+        <div ref="miniMap" class="w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200 relative z-0"></div>
       </div>
     </div>
 
-    <!-- Siembras -->
-    <div class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:plant-fill" class="w-5 h-5" /> Siembras</h2>
-        <button @click="editarSiembra = {}" class="text-xs bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition shadow-sm">
+        <h2 class="font-bold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:plant-fill" class="w-4 h-4 text-mp-blue" /> Siembras</h2>
+        <button @click="editarSiembra = {}" class="text-xs bg-mp-blue text-white font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm">
           + Agregar
         </button>
       </div>
       <div v-if="lote.siembras && lote.siembras.length > 0" class="space-y-2">
-        <div v-for="(s, i) in lote.siembras" :key="i" class="text-sm bg-gray-50 rounded-lg p-3 flex justify-between items-start gap-2">
+        <div v-for="(s, i) in lote.siembras" :key="i" class="text-sm bg-gray-50 rounded-xl p-3 flex justify-between items-start gap-2">
           <div>
-            <p><span class="text-gray-500">Variedad:</span> {{ s.variedad }}</p>
-            <p><span class="text-gray-500">Fecha:</span> {{ s.fecha }}</p>
+            <p class="font-medium text-gray-700">{{ s.variedad }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ s.fecha }}</p>
           </div>
-          <button @click="eliminarSiembra(i)" class="text-gray-400 hover:text-red-500 transition flex-shrink-0 mt-0.5">
+          <button @click="eliminarSiembra(i)" class="text-gray-300 hover:text-red-400 transition flex-shrink-0 mt-0.5">
             <Icon icon="ph:trash-fill" class="w-4 h-4" />
           </button>
         </div>
@@ -69,21 +69,20 @@
       @cerrar="editarSiembra = null"
     />
 
-    <!-- Cosechas -->
-    <div class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:grains-fill" class="w-5 h-5" /> Cosechas</h2>
-        <button @click="editarCosecha = {}" class="text-xs bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition shadow-sm">
+        <h2 class="font-bold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:grains-fill" class="w-4 h-4 text-mp-blue" /> Cosechas</h2>
+        <button @click="editarCosecha = {}" class="text-xs bg-mp-blue text-white font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm">
           + Agregar
         </button>
       </div>
       <div v-if="lote.cosechas && lote.cosechas.length > 0" class="space-y-2">
-        <div v-for="(c, i) in lote.cosechas" :key="i" class="text-sm bg-gray-50 rounded-lg p-3 flex justify-between items-start gap-2">
+        <div v-for="(c, i) in lote.cosechas" :key="i" class="text-sm bg-gray-50 rounded-xl p-3 flex justify-between items-start gap-2">
           <div>
-            <p><span class="text-gray-500">Variedad:</span> {{ c.variedad }}</p>
-            <p><span class="text-gray-500">Fecha:</span> {{ c.fecha }}</p>
+            <p class="font-medium text-gray-700">{{ c.variedad }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ c.fecha }}</p>
           </div>
-          <button @click="eliminarCosecha(i)" class="text-gray-400 hover:text-red-500 transition flex-shrink-0 mt-0.5">
+          <button @click="eliminarCosecha(i)" class="text-gray-300 hover:text-red-400 transition flex-shrink-0 mt-0.5">
             <Icon icon="ph:trash-fill" class="w-4 h-4" />
           </button>
         </div>
@@ -99,23 +98,21 @@
       @cerrar="editarCosecha = null"
     />
 
-    <!-- Líquidos -->
-    <div class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:flask-fill" class="w-5 h-5" /> Líquidos aplicados</h2>
-        <button @click="editarLiquido = {}" class="text-xs bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition shadow-sm">
+        <h2 class="font-bold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:flask-fill" class="w-4 h-4 text-mp-blue" /> Líquidos aplicados</h2>
+        <button @click="editarLiquido = {}" class="text-xs bg-mp-blue text-white font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm">
           + Agregar
         </button>
       </div>
       <div v-if="lote.liquidos && lote.liquidos.length > 0" class="space-y-2">
-        <div v-for="(liq, i) in lote.liquidos" :key="i" class="text-sm bg-gray-50 rounded-lg p-3 flex justify-between items-start gap-2">
+        <div v-for="(liq, i) in lote.liquidos" :key="i" class="text-sm bg-gray-50 rounded-xl p-3 flex justify-between items-start gap-2">
           <div>
-            <p><span class="text-gray-500">Producto:</span> {{ liq.tipo || '—' }}</p>
-            <p><span class="text-gray-500">Fecha:</span> {{ liq.fecha }}</p>
-            <p><span class="text-gray-500">Litros/ha:</span> {{ liq.litrosXHa }}</p>
-            <p><span class="text-gray-500">Maquinista:</span> {{ liq.maquinista }}</p>
+            <p class="font-medium text-gray-700">{{ liq.tipo || '—' }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ liq.fecha }} · {{ liq.litrosXHa }} L/ha</p>
+            <p class="text-xs text-gray-400">{{ liq.maquinista }}</p>
           </div>
-          <button @click="eliminarLiquido(i)" class="text-gray-400 hover:text-red-500 transition flex-shrink-0 mt-0.5">
+          <button @click="eliminarLiquido(i)" class="text-gray-300 hover:text-red-400 transition flex-shrink-0 mt-0.5">
             <Icon icon="ph:trash-fill" class="w-4 h-4" />
           </button>
         </div>
@@ -130,26 +127,29 @@
       @cerrar="editarLiquido = null"
     />
 
-    <!-- Lluvias -->
-    <div class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:cloud-rain-fill" class="w-5 h-5" /> Lluvias</h2>
-        <button @click="editarLluvia = {}" class="text-xs bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition shadow-sm">
+        <h2 class="font-bold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:cloud-rain-fill" class="w-4 h-4 text-mp-blue" /> Lluvias</h2>
+        <button @click="editarLluvia = {}" class="text-xs bg-mp-blue text-white font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm">
           + Agregar
         </button>
       </div>
       <div v-if="lote.lluvias && lote.lluvias.length > 0" class="space-y-2">
-        <div v-for="(lluvia, i) in lote.lluvias" :key="i" class="text-sm bg-gray-50 rounded-lg p-3 flex justify-between items-center gap-2">
-          <span>{{ lluvia.fecha }}</span>
+        <div v-for="(lluvia, i) in lote.lluvias" :key="i" class="text-sm bg-gray-50 rounded-xl p-3 flex justify-between items-center gap-2">
+          <span class="text-gray-700">{{ lluvia.fecha }}</span>
           <div class="flex items-center gap-2">
-            <span class="font-medium">{{ lluvia.mm }} mm</span>
-            <button @click="eliminarLluvia(i)" class="text-gray-400 hover:text-red-500 transition">
+            <span class="font-bold text-mp-blue">{{ lluvia.mm }} mm</span>
+            <button @click="eliminarLluvia(i)" class="text-gray-300 hover:text-red-400 transition">
               <Icon icon="ph:trash-fill" class="w-4 h-4" />
             </button>
           </div>
         </div>
       </div>
       <p v-else class="text-sm text-gray-400">Sin registrar</p>
+      <div v-if="lote.lluvias && lote.lluvias.length > 0" class="mt-3 pt-3 border-t border-gray-200 flex justify-between text-xs text-gray-500">
+        <span>Total acumulado: <strong class="text-mp-blue font-bold">{{ lluviasTotal }} mm</strong></span>
+        <span>Últimos 30 días: <strong class="text-mp-blue font-bold">{{ lluvias30d }} mm</strong></span>
+      </div>
     </div>
 
     <ModalLluvia
@@ -159,27 +159,36 @@
       @cerrar="editarLluvia = null"
     />
 
-    <!-- Desembolsos -->
-    <div class="bg-white rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.08)] border border-gray-100 p-4 mb-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-4">
       <div class="flex items-center justify-between mb-3">
-        <h2 class="font-semibold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:wallet-fill" class="w-5 h-5" /> Desembolsos</h2>
-        <button @click="editarDesembolso = {}" class="text-xs bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-green-700 transition shadow-sm">
+        <h2 class="font-bold text-gray-700 flex items-center gap-1.5"><Icon icon="ph:wallet-fill" class="w-4 h-4 text-mp-blue" /> Desembolsos</h2>
+        <button @click="editarDesembolso = {}" class="text-xs bg-mp-blue text-white font-semibold px-4 py-2 rounded-xl hover:bg-mp-blue-dark transition shadow-sm">
           + Agregar
         </button>
       </div>
       <div v-if="lote.desembolsos && lote.desembolsos.length > 0" class="space-y-2">
-        <div v-for="(d, i) in lote.desembolsos" :key="i" class="text-sm bg-gray-50 rounded-lg p-3 flex justify-between items-start gap-2">
+        <div v-for="(d, i) in lote.desembolsos" :key="i" class="text-sm bg-gray-50 rounded-xl p-3 flex justify-between items-start gap-2">
           <div>
-            <p><span class="text-gray-500">Descripción:</span> {{ d.descripcion }}</p>
-            <p><span class="text-gray-500">Monto:</span> ${{ d.monto }}</p>
-            <p><span class="text-gray-500">Método:</span> {{ d.metodoPago }}</p>
+            <p class="font-medium text-gray-700">{{ d.descripcion }}</p>
+            <p class="text-sm font-bold text-mp-green mt-0.5">{{ formatearMonto(d) }}</p>
+            <p class="text-xs text-gray-400">{{ d.metodoPago }}</p>
           </div>
-          <button @click="eliminarDesembolso(i)" class="text-gray-400 hover:text-red-500 transition flex-shrink-0 mt-0.5">
+          <button @click="eliminarDesembolso(i)" class="text-gray-300 hover:text-red-400 transition flex-shrink-0 mt-0.5">
             <Icon icon="ph:trash-fill" class="w-4 h-4" />
           </button>
         </div>
       </div>
       <p v-else class="text-sm text-gray-400">Sin registrar</p>
+      <div v-if="lote.desembolsos && lote.desembolsos.length > 0" class="mt-3 pt-3 border-t border-gray-200 space-y-1">
+        <div v-if="totalDesembolsos.ARS" class="flex justify-between text-sm font-bold text-gray-700">
+          <span>Total ARS</span>
+          <span class="text-mp-blue">{{ totalDesembolsos.ARS }}</span>
+        </div>
+        <div v-if="totalDesembolsos.USD" class="flex justify-between text-sm font-bold text-gray-700">
+          <span>Total USD</span>
+          <span class="text-mp-blue">{{ totalDesembolsos.USD }}</span>
+        </div>
+      </div>
     </div>
 
     <ModalDesembolso
@@ -190,6 +199,7 @@
     />
   </div>
   <div v-else class="text-center py-12 text-gray-400">
+    <Icon icon="ph:spinner-fill" class="w-8 h-8 mx-auto mb-2 animate-spin text-mp-blue" />
     Cargando...
   </div>
 </template>
@@ -229,6 +239,42 @@ export default {
   computed: {
     lote() {
       return this.store.getLoteById(this.$route.params.id)
+    },
+
+    totalDesembolsos() {
+      if (!this.lote?.desembolsos) return { ARS: null, USD: null }
+      let ARS = 0, USD = 0
+      for (const d of this.lote.desembolsos) {
+        const m = Number(d.monto)
+        if (isNaN(m)) continue
+        const moneda = d.moneda || (m % 1 !== 0 ? 'USD' : 'ARS')
+        if (moneda === 'USD') USD += m
+        else ARS += m
+      }
+      ARS = Math.round(ARS * 100) / 100
+      USD = Math.round(USD * 100) / 100
+      const fmt = (v, mon) => {
+        try {
+          if (v <= 0) return null
+          if (mon === 'USD') return `US$ ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2 }).format(v)}`
+          return `$ ${new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2 }).format(v)}`
+        } catch { return null }
+      }
+      return { ARS: fmt(ARS, 'ARS'), USD: fmt(USD, 'USD') }
+    },
+
+    lluviasTotal() {
+      if (!this.lote?.lluvias) return 0
+      return Math.round(this.lote.lluvias.reduce((s, ll) => s + (Number(ll.mm) || 0), 0) * 10) / 10
+    },
+
+    lluvias30d() {
+      if (!this.lote?.lluvias) return 0
+      const hace30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      const total = this.lote.lluvias
+        .filter(ll => ll.fecha && new Date(ll.fecha) >= hace30)
+        .reduce((s, ll) => s + (Number(ll.mm) || 0), 0)
+      return Math.round(total * 10) / 10
     }
   },
 
@@ -379,6 +425,22 @@ export default {
     eliminarDesembolso(index) {
       this.lote.desembolsos.splice(index, 1)
       this.store.guardarLote(this.lote)
+    },
+
+    formatearMonto(d) {
+      const monto = Number(d.monto)
+      if (isNaN(monto)) return `$${d.monto}`
+      const moneda = d.moneda || (monto % 1 !== 0 ? 'USD' : 'ARS')
+      try {
+        if (moneda === 'USD') {
+          const num = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(monto)
+          return `US$ ${num}`
+        }
+        const num = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(monto)
+        return `$ ${num}`
+      } catch {
+        return `${moneda === 'USD' ? 'US$' : '$'}${monto}`
+      }
     },
 
     async toggleActivo() {
